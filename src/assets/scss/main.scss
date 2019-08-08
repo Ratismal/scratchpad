@@ -1,0 +1,83 @@
+@import 'variables';
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+
+  background: black;
+  overflow: hidden;
+  color: white;
+
+  font-family: sans-serif;
+}
+
+#app {
+  display: grid;
+  background: red;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background: $color-background;
+
+  grid-template-columns: 250px 1fr;
+  grid-template-rows: 60px 1fr;
+  grid-template-areas: 
+    'left header'
+    'left content';
+
+  &.sidebar-active {
+    grid-template-columns: 250px 1fr 300px;
+    grid-template-areas: 
+      'left header right'
+      'left content right';
+  }
+
+  & > .header {
+    grid-area: header;
+    background: $color-darker;
+    display: flex;
+  }
+
+  & > .left-sidebar {
+    grid-area: left;
+    background: $color-darker;
+  }
+
+  & > .right-sidebar {
+    grid-area: right;
+    background: $color-darker;
+  }
+
+  & > #content {
+    grid-area: content;
+    position: relative;
+  }
+}
+
+.card {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  background: $color-darker;
+  min-width: 400px;
+
+  .header {
+    margin: 0;
+    height: 30px;
+    padding: 1rem;
+    background: $color-darker;
+  }
+
+  .content {
+    min-height: 300px;
+    padding: 1rem;
+    text-align: left;
+  }
+}
