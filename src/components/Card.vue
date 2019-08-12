@@ -1,9 +1,23 @@
 <template>
-  <div ref="card" :style="position" class="card">
-    <div ref="header" class="header" @mousedown.prevent="drag" @mouseup.prevent="stopDrag"></div>
-    <div class="content">
-      <div v-if="edit"></div>
-      <div v-else v-html="formattedContent"></div>
+  <div ref="card" :style="style" class="card" @mousedown="$emit('focus')">
+    <div ref="header" class="header" @mousedown.prevent="drag" @mouseup.prevent="stopDrag">
+      <button class="button item material-icons" @mousedown.prevent="toggleEdit">edit</button>
+      <button class="button item material-icons" @mousedown="setState('DELETE')">close</button>
+    </div>
+    <div class="content" :style="data.frost ? 'background-color:' + data.frost + '33' : ''">
+      <div v-if="state === 'EDIT'">
+        <label>Frost</label>
+        <input type="color" v-model="data.frost" />
+        <label>Content</label>
+        <textarea v-model="data.content"></textarea>
+      </div>
+      <div v-else-if="state === 'DELETE'" class="delete-confirmation">
+        <p>Are you sure you'd like to delete this card?</p>
+        <p>There's no undo!</p>
+        <button class="button material-icons" @click.prevent="setState('VIEW')">close</button>
+        <button class="button material-icons" @click.prevent="$emit('delete')">check</button>
+      </div>
+      <div v-else-if="state === 'VIEW'" v-html="formattedContent"></div>
     </div>
   </div>
 </template>
@@ -19,7 +33,8 @@ export default {
         content: "New Card",
         key: Date.now(),
         x: 50,
-        y: 50
+        y: 50,
+        frost: null
       })
     }
   },
@@ -27,7 +42,7 @@ export default {
     formattedContent() {
       return marked(this.data.content);
     },
-    position() {
+    style() {
       return {
         top: Math.max(0, this.data.y) + "px",
         left: Math.max(0, this.data.x) + "px"
@@ -38,7 +53,7 @@ export default {
   },
   data() {
     return {
-      edit: false,
+      state: "VIEW",
       dragging: false,
       tracker: null,
       mouseupTracker: null,
@@ -53,6 +68,13 @@ export default {
     if (!this.mouseupTracker) this.mouseupTracker = this.stopDrag.bind(this);
   },
   methods: {
+    toggleEdit() {
+      if (this.state === "EDIT") this.state = "VIEW";
+      else this.state = "EDIT";
+    },
+    setState(state) {
+      this.state = state;
+    },
     trackMouse(event) {
       this.data.x = event.pageX - this.wrapper.offsetLeft - this.oldX;
       this.data.y = event.pageY - this.wrapper.offsetTop - this.oldY;
@@ -62,6 +84,7 @@ export default {
       // this.oldY = event.clientY;
     },
     drag(event) {
+      // this.$emit("drag");
       let offset = {
         x: this.$refs.card.offsetLeft + this.wrapper.offsetLeft,
         y: this.$refs.card.offsetTop + this.wrapper.offsetTop

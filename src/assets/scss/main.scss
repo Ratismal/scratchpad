@@ -1,4 +1,5 @@
 @import 'variables';
+@import url("https://fonts.googleapis.com/icon?family=Material+Icons");
 
 * {
   box-sizing: border-box;
@@ -43,11 +44,36 @@ html, body {
     grid-area: header;
     background: $color-darker;
     display: flex;
+
+    button.material-icons {
+      width: 60px;
+    }
+
+    input {
+      margin-left: 1rem;
+    }
   }
 
   & > .left-sidebar {
     grid-area: left;
     background: $color-darker;
+
+    .board-wrapper {
+      display: flex;
+      flex-direction: column;
+
+      .board {
+        display: block;
+        width: 100%;
+        text-align: center;
+        padding: 2rem 1rem;
+        background: $color-darker;
+
+        &:hover {
+          background: $color-darkest;
+        }
+      }
+    }
   }
 
   & > .right-sidebar {
@@ -61,23 +87,85 @@ html, body {
   }
 }
 
+.button {
+  background: $color-lighter;
+  color: white;
+  border: none;
+  user-select: none;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.4);
+  }
+}
+
 .card {
   position: absolute;
   display: flex;
   flex-direction: column;
-  background: $color-darker;
+  background: $color-darkest;
   min-width: 400px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+
+  &.unfocused {
+    user-select: none;
+    opacity: 0.85;
+  }
 
   .header {
     margin: 0;
     height: 30px;
-    padding: 1rem;
-    background: $color-darker;
+    background: $color-darkest;
+    display: flex;
+    justify-content: flex-end;
+
+
+    button {
+
+    }
   }
 
   .content {
     min-height: 300px;
+    max-height: 500px;
     padding: 1rem;
     text-align: left;
+    overflow-x: auto;
   }
+}
+
+textarea {
+  background: $color-lighter;
+  color: white;
+  width: 100%;
+  border: none;
+  padding: 0.5rem;
+  min-height: 250px;
+  resize: none;
+}
+
+input[type='color'] {
+  height: 30px;
+  background: $color-lighter;
+  width: 100%;
+  border: none;
+}
+label {
+  margin: 0.25rem 0;
+  display: block;
+}
+
+.delete-confirmation {
+  text-align: center;
+  
+  button {
+    padding: 1rem;
+  }
+}
+
+input {
+  background: $color-lighter;
+  padding: 1rem;
+  border: none;
+  color: white;
 }
