@@ -1,7 +1,8 @@
 <template>
   <div ref="card" :style="style" class="card" @mousedown="$emit('focus')">
     <div ref="header" class="header" @mousedown.prevent="drag" @mouseup.prevent="stopDrag">
-      <button class="button item material-icons" @mousedown.prevent="toggleEdit">edit</button>
+      <button class="button item material-icons" @mousedown.prevent="setState('SCRIPT')">memory</button>
+      <button class="button item material-icons" @mousedown.prevent="setState('EDIT')">edit</button>
       <button class="button item material-icons" @mousedown="setState('DELETE')">close</button>
     </div>
     <div class="content" :style="data.frost ? 'background-color:' + data.frost + '33' : ''">
@@ -17,7 +18,11 @@
         <button class="button material-icons" @click.prevent="setState('VIEW')">close</button>
         <button class="button material-icons" @click.prevent="$emit('delete')">check</button>
       </div>
-      <div v-else-if="state === 'VIEW'" v-html="formattedContent"></div>
+      <div v-else-if="state === 'SCRIPT'">
+        <label>Dynamic Script</label>
+        <textarea v-model="data.script"></textarea>
+      </div>
+      <div v-else v-html="formattedContent"></div>
     </div>
   </div>
 </template>
@@ -66,14 +71,19 @@ export default {
     if (!this.wrapper) this.wrapper = document.getElementById("content");
     if (!this.tracker) this.tracker = this.trackMouse.bind(this);
     if (!this.mouseupTracker) this.mouseupTracker = this.stopDrag.bind(this);
+
+    this.setState("VIEW");
   },
   methods: {
-    toggleEdit() {
-      if (this.state === "EDIT") this.state = "VIEW";
-      else this.state = "EDIT";
-    },
     setState(state) {
-      this.state = state;
+      if (this.state === state) this.state = "VIEW";
+      else this.state = state;
+
+      if (this.state === "VIEW" && this.data.script) {
+        setTimeout(() => {
+          eval(this.data.script);
+        }, 50);
+      }
     },
     trackMouse(event) {
       this.data.x = event.pageX - this.wrapper.offsetLeft - this.oldX;
