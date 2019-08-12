@@ -17,7 +17,7 @@
         @click.prevent="repositionCards"
         title="Reposition Cards"
       >center_focus_weak</button>
-      <input v-model="board.title" title='Board Name'/>
+      <input v-model="board.title" title="Board Name" />
       <button class="button material-icons" @click.prevent="addBoard" title="New Board">note_add</button>
       <button
         class="button material-icons"
@@ -73,7 +73,8 @@ export default {
         boards: [
           {
             key: Date.now(),
-            cards: []
+            cards: [],
+            title: "General"
           }
         ]
       };

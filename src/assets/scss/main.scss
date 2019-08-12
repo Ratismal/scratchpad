@@ -68,6 +68,7 @@ html, body {
         text-align: center;
         padding: 2rem 1rem;
         background: $color-darker;
+        user-select: none;
 
         &:hover {
           background: $color-darkest;
