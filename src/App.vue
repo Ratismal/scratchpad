@@ -42,6 +42,7 @@
 <script>
 import "@/assets/scss/main.scss";
 import Card from "@/components/Card.vue";
+import CardData from "@/assets/structs/CardData.js";
 
 export default {
   name: "app",
@@ -79,6 +80,9 @@ export default {
         ]
       };
     }
+    for (const board of this.storage.boards) {
+      board.cards = board.cards.map(c => new CardData(c));
+    }
     this.save();
     // if (!this.saveInterval)
     //   this.saveInterval = setInterval(this.save.bind(this), 1000);
@@ -87,7 +91,7 @@ export default {
     storage: {
       handler(newValue) {
         if (newValue) {
-          localStorage.storage = JSON.stringify(newValue);
+          this.save(newValue);
         }
       },
       deep: true
@@ -119,17 +123,11 @@ export default {
       cards.push(card);
       this.focused = card.key;
     },
-    save() {
-      localStorage.storage = JSON.stringify(this.storage);
+    save(data) {
+      localStorage.storage = JSON.stringify(data || this.storage);
     },
     addCard() {
-      this.board.cards.push({
-        key: Date.now(),
-        content: "New Card",
-        x: 50,
-        y: 50,
-        frost: null
-      });
+      this.board.cards.push(new CardData());
     },
     addBoard() {
       this.storage.boards.push({

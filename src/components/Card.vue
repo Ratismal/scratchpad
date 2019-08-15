@@ -1,16 +1,41 @@
 <template>
   <div ref="card" :style="style" class="card" @mousedown="$emit('focus')">
     <div ref="header" class="header" @mousedown.prevent="drag" @mouseup.prevent="stopDrag">
-      <button class="button item material-icons" @mousedown.prevent="setState('SCRIPT')">memory</button>
-      <button class="button item material-icons" @mousedown.prevent="setState('EDIT')">edit</button>
-      <button class="button item material-icons" @mousedown="setState('DELETE')">close</button>
+      <span class="title">{{data.title}}</span>
+      <div class="button-group">
+        <button class="button item material-icons" @mousedown.prevent="setState('SCRIPT')">memory</button>
+        <button class="button item material-icons" @mousedown.prevent="setState('EDIT')">edit</button>
+        <button class="button item material-icons" @mousedown="setState('DELETE')">close</button>
+      </div>
     </div>
-    <div class="content" :style="data.frost ? 'background-color:' + data.frost + '33' : ''">
+    <div
+      :class="{content:true,'no-padding':data.type === 'iframe'}"
+      :style="data.frost ? 'background-color:' + data.frost + '33' : ''"
+    >
       <div v-if="state === 'EDIT'">
+        <label>Type</label>
+        <select v-model="data.type">
+          <option value="normal">Normal</option>
+          <option value="iframe">iFrame</option>
+        </select>
+        <label>Title</label>
+        <input v-model="data.title" />
         <label>Frost</label>
         <input type="color" v-model="data.frost" />
-        <label>Content</label>
-        <textarea v-model="data.content"></textarea>
+        <template v-if="data.type === 'iframe'">
+          <label>iFrame Source</label>
+          <input v-model="data.iframe.src" />
+          <label>Height</label>
+          <input v-model="data.iframe.height" />
+          <label>Width</label>
+          <input v-model="data.iframe.width" />
+          <label>Frameborder</label>
+          <input v-model="data.iframe.frameborder" />
+        </template>
+        <template v-else>
+          <label>Content</label>
+          <textarea v-model="data.content"></textarea>
+        </template>
       </div>
       <div v-else-if="state === 'DELETE'" class="delete-confirmation">
         <p>Are you sure you'd like to delete this card?</p>
@@ -22,7 +47,12 @@
         <label>Dynamic Script</label>
         <textarea v-model="data.script"></textarea>
       </div>
-      <div v-else v-html="formattedContent"></div>
+      <template v-else>
+        <template v-if="data.type === 'iframe'">
+          <iframe v-bind="data.iframe" />
+        </template>
+        <div v-else v-html="formattedContent"></div>
+      </template>
     </div>
   </div>
 </template>
@@ -30,17 +60,13 @@
 <script>
 import marked from "marked";
 
+import CardData from "@/assets/structs/CardData.js";
+
 export default {
   props: {
     data: {
       type: Object,
-      default: () => ({
-        content: "New Card",
-        key: Date.now(),
-        x: 50,
-        y: 50,
-        frost: null
-      })
+      default: () => new CardData()
     }
   },
   computed: {
